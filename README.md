@@ -30,14 +30,14 @@ How to use
 
 The best way to see how rbase can be used is through the specs in the `spec.rb` file as well as the `rbase.rb` file. Here is a quick summary:
 
-* GET /schema - show the current schema
-* POST /schema - with the parameter key `rows` and the value a JSON formatted schema e.g. {'User' => ['name', 'email', 'age'], 'Article' => ['title', 'content', 'author', 'created_at']} where User and Article are the names of the tables, while the arrays contain a list of attributes/columns of the table.
-* GET /:table/:id - get a specific record by record id e.g. GET /User/1 will get the User record with id 1.
-* POST /:table - insert a single record with the parameter key `rows` and the value a JSON formatted row e.g. { 'name' => 'John Doe', 'email' => 'john@gmail.com', 'age'  => 25 }. :table is the table name. 
-* PUT /:table/:id - update a single record given the record id. The updated values are PUT in through the parameter key `rows`, with the value a JSON formatted row. Not all attributes need to be updated.
-* DELETE /:table/:id - delete a single record given the record id
-* GET /:table/:attribute/:op/:value - query the given table. :attribute is the attribute to query, :op is the operation to perform (one of the list in 'is', 'not', 'like', 'gt' and 'lt') and :value is the value queried. For e.g. to select all Users who have 'John' in their names, you can use GET /User/name/like/John. You can also specify that the value is of a specific type by providing `?type=:type` (where :type is one of 'string', 'integer' or 'time', the default being 'string'). For example, if you want to find Users 20 years of age and above, you can use GET /User/age/gt/20?type=integer
-* GET /persist - persists the database to JSON files on the same path as the running server
+* `GET /schema` - show the current schema
+* `POST /schema` - with the parameter key `rows` and the value a JSON formatted schema e.g. `{'User' => ['name', 'email', 'age'], 'Article' => ['title', 'content', 'author', 'created_at']}` where User and Article are the names of the tables, while the arrays contain a list of attributes/columns of the table.
+* `GET /:table/:id` - get a specific record by record id e.g. GET /User/1 will get the User record with id 1.
+* `POST /:table` - insert a single record with the parameter key `rows` and the value a JSON formatted row e.g. `{ 'name' => 'John Doe', 'email' => 'john@gmail.com', 'age'  => 25 }`. :table is the table name. 
+* `PUT /:table/:id` - update a single record given the record id. The updated values are PUT in through the parameter key `rows`, with the value a JSON formatted row. Not all attributes need to be updated.
+* `DELETE /:table/:id` - delete a single record given the record id
+* `GET /:table/:attribute/:op/:value` - query the given table. :attribute is the attribute to query, :op is the operation to perform (one of the list in 'is', 'not', 'like', 'gt' and 'lt') and :value is the value queried. For e.g. to select all Users who have 'John' in their names, you can use `GET /User/name/like/John`. You can also specify that the value is of a specific type by providing `?type=:type` (where :type is one of 'string', 'integer' or 'time', the default being 'string'). For example, if you want to find Users 20 years of age and above, you can use `GET /User/age/gt/20?type=integer`
+* `GET /persist` - persists the database to JSON files on the same path as the running server
 
 What's good
 ===========
