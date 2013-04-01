@@ -1,6 +1,5 @@
 rbase
 =====
-
 rBase is a simple, minimalist, pure-Ruby noSQL database. The whole database is in memory, stored in tables made from Arrays and rows made from Structs that are defined by the user. The database can be persisted to disk through a manual persistence call (otherwise it will remain only in memory).
 
 Features
@@ -95,4 +94,3 @@ Why is this so?
 
 1. I wrote this for more of an aesthetic reason rather than performance. Some of the more 'elegant' code can be replaced by grittier by higher performing code
 2. Ruby is not really meant for this kind of work
-
