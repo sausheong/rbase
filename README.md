@@ -43,14 +43,18 @@ What's good
 ===========
 
 * It's  minimalist. The whole implementation is less than 150 lines of code.
-* Except for Sinatra and JSON and I only use what's available in Ruby core (1.9.3) and used even the Standard Library on a need-to basis.
+* Except for Sinatra and JSON and I only use what's available in Ruby core (1.9.3) and used even the Standard Library on a need-to basis. There is no rocket science involved, only pure Ruby
 * Interface is through standard HTTP. You can curl everything.
-* Relatively feature-rich for a small code-base. 
+* Relatively feature-rich for a small codebase. 
+* It's really small, so you can easily extend it or change it to what you want
+
 
 What's bad
 ==========
 
-* The performance of rbase is terrible for queries though it's relatively decent for single record retrievals and inserts.
+* There are no relations between tables. You can't for eg do queries across multiple tables. To do this, you will need to issue multiple queries and concatenate/manipulate the JSON yourself
+* The implementation is still pretty brittle. There's minimal error handling, and you can potentially break the database by storing the wrong data type into an attribute
+* The performance is terrible for queries though it's relatively decent for single record retrievals and inserts.
 * You really shouldn't store more than 10,000 records per database if you want any sort of performance
 
 Tests
