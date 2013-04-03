@@ -1,7 +1,7 @@
 require 'date'
+require 'thread'
 
 class Table < Array
-  attr :name, :index
   
   def to_string(val)
     val.to_s
@@ -15,34 +15,43 @@ class Table < Array
     DateTime.parse(val.to_s)
   end
   
-  def initialize(name)
+  def initialize(name, index=0)
+    @mutex = Mutex.new
     @name = name
-    @index = 0 # self-incrementing serial number for id
+    @index = index # self-incrementing serial number for id
   end
   
   def select_all(attribute, op, val, type='string')
     table = self.compact
-    value = self.send("to_#{type}".to_sym, val)
+    case type
+    when 'integer' then value = to_integer(val)
+    when 'time' then value = to_time(val)
+    else value = val
+    end
 
     case op
-      when 'is'   then table.keep_if {|row| self.send("to_#{type}".to_sym, row[attribute]) == value}
-      when 'not'  then table.delete_if {|row| self.send("to_#{type}".to_sym, row[attribute]) == value}
+      when 'is'   then table.keep_if {|row| row[attribute] == value}
+      when 'not'  then table.delete_if {|row| row[attribute] == value}
       when 'gt'   then table.keep_if {|row| self.send("to_#{type}".to_sym, row[attribute]) > value}
       when 'lt'   then table.keep_if {|row| self.send("to_#{type}".to_sym, row[attribute]) < value}
-      when 'like' then table.keep_if {|row| self.send("to_#{type}".to_sym, row[attribute]).include?(value)}
+      when 'like' then table.keep_if {|row| row[attribute].include?(value)}
     end
     table
   end
   
   def insert(row)
-    @index += 1
+    @mutex.synchronize {
+      @index += 1
+    }    
     row.id = @index
     self << row
     @index
   end
   
   def delete(index)
-    self.delete_if {|row| row.id == index}
+    @mutex.synchronize {
+      self.delete_if {|row| row.id == index}
+    }
   end
   
   def get(index)
@@ -56,8 +65,10 @@ class Table < Array
   end
   
   def persist
-    File.open("./#{name}.json", "w") {|f| f.write(self.to_json)}
-    File.open("./#{name}.index", "w") {|f| f.write(@index)}
+    @mutex.synchronize {
+      File.open("./#{name}.json", "w") {|f| f.write(self.to_json)}
+      File.open("./#{name}.index", "w") {|f| f.write(@index)}
+    }
   end
 end
 
@@ -75,7 +86,10 @@ configure do
             json = JSON.parse table
             struct = Struct.new(tablename, *(json.first.keys))
             Object.const_set(tablename, struct)    
-            settings.database[tablename] = Table.new(tablename)
+            File.open("./#{tablename}.index", 'a+') do |file|
+              index = file.read
+              settings.database[tablename] = Table.new(tablename, index)
+            end
             json.each do |record|
               row = struct.new
               record.each { |attribute, value| row.send("#{attribute}=".to_sym, value) }
